@@ -1,0 +1,4 @@
+aws_credentials_file = "xxxxx"  # ~/.aws/credentials
+aws_profile = "xxxxx"           # default
+aws_region = "xxxxx"            # eu-west-1
+aws_default_subnet = "xxxxx"    # your-subnet-name
