@@ -29,8 +29,8 @@ Then, download the Fuse distribution, either:
 
   2.  At the command line, store the cookie value in an environment variable, and use `curl` to download the binary:
 
-      $ export JSESSIONID=<yoursessionid>
-      $ curl --cookie "JSESSIONID=$JSESSIONID;" -OL https://access.redhat.com/jbossnetwork/restricted/softwareDownload.html?softwareId=XXXXX
+        $ export JSESSIONID=<yoursessionid>
+        $ curl --cookie "JSESSIONID=$JSESSIONID;" -OL https://access.redhat.com/jbossnetwork/restricted/softwareDownload.html?softwareId=XXXXX
 
 Finally, upload the binary to an S3 bucket 🐝:
 
