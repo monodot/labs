@@ -46,6 +46,18 @@ Run Terraform to build the cloud infrastructure:
     $ terraform plan -var-file=../terraform.tfvars
     $ terraform apply -var-file=../terraform.tfvars
 
+## To show deployment info
+
+To show the current Terraform state:
+
+    $ terraform refresh -var-file=../terraform.tfvars
+    $ terraform state
+
+To show the IP addresses of the containers, fetch the relevant _output_ that has been configured in `main.tf`:
+
+    $ terraform output fabric_server_instance_ips
+    $ terraform output managed_container_instance_ips
+
 ## To destroy
 
 **IMPORTANT:** To delete the infrastructure when you've finished with it:

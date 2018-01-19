@@ -98,10 +98,10 @@ resource "aws_security_group" "default" {
   }
 }
 
-resource "aws_key_pair" "auth" {
-  key_name   = "${var.key_name}"
-  public_key = "${file(var.key_path)}"
-}
+#resource "aws_key_pair" "auth" {
+#  key_name   = "${var.key_name}"
+#  public_key = "${file(var.key_path)}"
+#}
 
 # An AWS IAM role and role_policy that Allows fetching stuff from S3 buckets
 # From: https://optimalbi.com/blog/2016/07/12/aws-tips-and-tricks-moving-files-from-s3-to-ec2-instance/
@@ -160,16 +160,18 @@ resource "aws_iam_instance_profile" "default" {
 resource "aws_instance" "fabric_server" {
   connection {
     # The default username for our AMI
-    user = "ec2-user"
+    user        = "ec2-user"
+    private_key = "${file(var.key_path)}"
   }
-  count = "${var.fabric_server_count}"
+
+  count                  = "${var.fabric_server_count}"
   
   # TODO update this with a lookup for the correct AMI - ami = "${lookup(var.aws_amis, var.aws_region)}"
-  ami = "${var.aws_ami}"
+  ami                    = "${var.aws_ami}"
 
-  instance_type = "${var.fabric_server_instance_type}"
+  instance_type          = "${var.fabric_server_instance_type}"
   # availability_zone = "${var.aws_availability_zone}"
-  key_name = "${var.key_name}"
+  key_name               = "${var.key_name}"
   
   # Configure the fascinating storage
   root_block_device = {
@@ -181,10 +183,10 @@ resource "aws_instance" "fabric_server" {
   vpc_security_group_ids = ["${aws_security_group.default.id}"]
   
   # Launch the instances into the Subnet we created
-  subnet_id = "${aws_subnet.default.id}"
+  subnet_id              = "${aws_subnet.default.id}"
   
   # Add the instance profile to allow it to pull files from S3
-  iam_instance_profile = "${aws_iam_instance_profile.default.name}"
+  iam_instance_profile   = "${aws_iam_instance_profile.default.name}"
   
   # Wait for instance profile to appear due to https://github.com/terraform-providers/terraform-provider-aws/issues/838
   provisioner "local-exec" {
@@ -229,3 +231,15 @@ resource "aws_instance" "managed-container" {
   }
 }
 */
+
+
+
+# ---------------------------------------------------
+
+output "fabric_server_instance_ips" {
+  value = ["${aws_instance.fabric_server.*.public_ip}"]
+}
+
+#output "managed_container_instance_ips" {
+#  value = ["${aws_instance.managed_container.*.public_ip}"]
+#}
