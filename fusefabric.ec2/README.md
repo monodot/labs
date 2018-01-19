@@ -1,9 +1,9 @@
 # fusefabric (AWS)
 
-JBoss Fuse Fabric lab environment on AWS (**WORK IN PROGRESS**)
+JBoss Fuse Fabric lab environment on AWS (**WORK IN PROGRESS**):
 
-- 3 x Fabric Servers
-- 2 x Managed Container nodes
+- 3 x [Fabric Server][fabricconcepts] nodes (`t2.medium`)
+- 2 x [Managed Container][fabricconcepts] (`t2.medium`)
 
 You will need:
 
@@ -14,6 +14,11 @@ Fuse requires:
 
 - 700 MB of free disk space
 - 2 GB of free RAM
+
+Each node is provisioned with:
+
+- OpenJDK (`java-1.8.0-openjdk-devel`)
+- `pip` and `awscli` (for easy S3 access)
 
 ## Make the JBoss Fuse distribution available
 
@@ -38,15 +43,15 @@ Finally, upload the binary to an S3 bucket 🐝:
 
     $ aws s3 cp ./jboss-fuse-karaf-6.3.0.redhat-310.zip s3://mybucket/files/
 
-## To deploy
+## Deploy
 
-Run Terraform to build the cloud infrastructure:
+Run Terraform to **deploy** the cloud infrastructure:
 
     $ terraform init
     $ terraform plan -var-file=../terraform.tfvars
     $ terraform apply -var-file=../terraform.tfvars
 
-## To show deployment info
+## To describe
 
 To show the current Terraform state:
 
@@ -56,33 +61,22 @@ To show the current Terraform state:
 To show the IP addresses of the containers, fetch the relevant _output_ that has been configured in `main.tf`:
 
     $ terraform output fabric_server_instance_ips
+    192.2.3.4,
+    192.2.3.5,
+    192.2.3.6
     $ terraform output managed_container_instance_ips
+
+## To play
+
+To connect to a container:
+
+    $ ssh -i /path/to/yourkey.pem ec2-user@<ip-address>
 
 ## To destroy
 
-**IMPORTANT:** To delete the infrastructure when you've finished with it:
+Don't forget to **destroy the infrastructure** when you've finished with it:
 
     $ terraform destroy -var-file=../terraform.tfvars
 
-## TODO
 
-CONT: resolve this:
-
-```
-4 error(s) occurred:
-
-* aws_key_pair.auth: 1 error(s) occurred:
-
-* aws_key_pair.auth: Error import KeyPair: InvalidParameterValue: Value for parameter PublicKeyMaterial is invalid. Length exceeds maximum of 2048.
-	status code: 400, request id: xxxx
-* aws_instance.fabric_server[0]: 1 error(s) occurred:
-
-* timeout
-* aws_instance.fabric_server[2]: 1 error(s) occurred:
-
-* timeout
-* aws_instance.fabric_server[1]: 1 error(s) occurred:
-
-* timeout
-```
-
+[fabricconcepts]: https://access.redhat.com/documentation/en-us/red_hat_jboss_fuse/6.3/html/fabric_guide/fabric_overview#Fabric_Overview-Concepts
